@@ -1,6 +1,7 @@
 //! Interface for configuring the Memory Protection Unit.
 
 use core::cmp;
+use core::fmt::Display;
 
 /// User mode access permissions.
 #[derive(Copy, Clone)]
@@ -37,7 +38,14 @@ impl Region {
 }
 
 pub trait MPU {
-    type MpuConfig: Default = ();
+    /// The stored configuration state for a particular set of MPU settings.
+    /// Likely this state will be per-process, that is it should contain all of
+    /// the required settings for the MPU when that process is running.
+    ///
+    /// It is `Default` so we can create empty state when the process is
+    /// created, and `Display` so that the `panic!()` output can display the
+    /// current state to help with debugging.
+    type MpuConfig: Default + Display = ();
 
     /// Enables the MPU.
     fn enable_mpu(&self) {}
